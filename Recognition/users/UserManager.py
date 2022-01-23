@@ -28,7 +28,7 @@ class UserManager:
 
     def getUser(self,id):
         for user in self.__users:
-            if user.getId() == id:
+            if int(user.getId()) == id:
                 return user
 
 
