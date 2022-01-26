@@ -15,7 +15,7 @@ class UserManager:
     def __registerUsers(self):
         cursor = self.collection.find({})
         for records in cursor:
-            id = str(records['id'])
+            id = int(records['id'])
             name = records['name']
             lastname = records['lastname']
             age = records['age']

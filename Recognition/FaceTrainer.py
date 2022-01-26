@@ -1,7 +1,10 @@
 import base64
+import io
 
 import cv2
 import json as JSON
+
+from PIL import Image
 
 from ObjectsManager import ObjectsManager
 from Recognition.users.User import User
@@ -21,7 +24,7 @@ class FaceTrainer:
         self.encodedData = None
 
     def trainFace(self,image_): #STILL TODO
-        image = cv2.cvtColor(image_, cv2.COLOR_BGR2RGB)
+        image = cv2.cvtColor(image_, cv2.COLOR_BGR2GRAY)
         face_locations = detector.detectMultiScale(image)
         for faces in face_locations:
             x, y, w, h = faces
@@ -30,7 +33,7 @@ class FaceTrainer:
             self.trainingdata.append(self.encodedData)
             self.__insertToDatabase()
             self.__addUser()
-            #imgdata = base64.b64decode(FaceTrainer.test)
+            #imgdata = base64.b64decode(self.encodedData)
             #imageJPG = Image.open(io.BytesIO(imgdata))
             #imageJPG.show()
 

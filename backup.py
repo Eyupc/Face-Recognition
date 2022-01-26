@@ -1,29 +1,43 @@
-#collection = connection.getDatabase()['users_whitelisted']
-#cursor = collection.find({})
-#cam = cv2.VideoCapture(0)
-#
-#test = json.loads(cursor[0]['train_data'])[0]
-#f = face_recognition.load_image_file(io.BytesIO(base64.b64decode(test)))
-#ff = face_recognition.face_encodings(f)[0]
-#while True:
-#    ret, img = cam.read()
-#    face_locations = face_recognition.face_locations(img)
-#    #face_encodings = face_recognition.face_encodings(img,face_locations)
-#   #for faces in face_encodings:
-#   #    results = face_recognition.compare_faces([ff],faces)
-#   #    if(results[0]):
-#   ##print('oki')
-#    for faces in face_locations:
-#        top, right, bottom, left = faces
-#        cv2.rectangle(img, (left, top), (right, bottom), (0, 0, 255), 2)
-#        break
-#    cv2.imshow("video",img)
-#    k = cv2.waitKey(10) & 0xff
-#    if k == 27:
-#        faceT = FaceTrainer('Eyup','Master',20)
-#        faceT.trainFace(img)
-#        break
 
-#print("\n [INFO] Exiting Program.")
-#cam.release()
-#cv2.destroyAllWindows()
+import cv2
+import cv2.data
+
+from ObjectsManager import ObjectsManager
+from Recognition.FaceTrainer import FaceTrainer
+from Recognition.TrainerManager import TrainerManager
+
+
+obj = ObjectsManager()
+
+cam = cv2.VideoCapture(0)
+cam.set(3,640)
+cam.set(4,480)
+minW = 0.1 * cam.get(3)
+minH = 0.1 * cam.get(4)
+ct = 0
+
+trainer = TrainerManager()
+
+while True:
+    ret,img = cam.read()
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    faces = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml').detectMultiScale(
+        gray,
+        scaleFactor=1.2,
+        minNeighbors=5,
+        minSize=(int(minW), int(minH)),
+    )
+
+    for (x, y, w, h) in faces:
+        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        k = cv2.waitKey(10) & 0xff
+        if ct != 10:
+            ct +=1
+            faceT = FaceTrainer('Kobe', 'Bryant', 36)
+            faceT.trainFace(img)
+        else:
+            trainer.train()
+            break
+
+    k = cv2.waitKey(10) & 0xff
+    cv2.imshow('video',img)

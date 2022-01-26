@@ -14,15 +14,21 @@ class TrainerManager:
         self.data = None
 
     def train(self):
-        ids = ObjectsManager.getUserManager().getUsers().keys()
+        ids = []
         train_data = []
         for user in ObjectsManager.getUserManager().getUsers().values():
-            print(user.getTrainData()[0])
-            img = Image.open(io.BytesIO(base64.b64decode(user.getTrainData()[0])))
-            train_data.append(np.array(img,'uint8'))
 
-        self.recognizer.train(train_data, np.array(ids))
-        self.recognizer.write(self.data) #TODO
+            for train in user.getTrainData():
+                img = Image.open(io.BytesIO(base64.b64decode(train)))
+                train_data.append(np.array(img,'uint8'))
+                ids.append(user.getId())
+
+        try:
+            self.recognizer.train(train_data, np.fromiter(ids,dtype=int))
+            print(self.recognizer)
+            self.recognizer.write("trainer.yml") #TODO
+        except Exception:
+            print("No users found")
 
     def getData(self):
         return self.data
