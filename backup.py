@@ -1,6 +1,7 @@
 
 import cv2
 import cv2.data
+import keyboard
 
 from ObjectsManager import ObjectsManager
 from Recognition.FaceTrainer import FaceTrainer
@@ -18,6 +19,9 @@ ct = 0
 
 trainer = TrainerManager()
 
+data = []
+faceT = FaceTrainer('Kendall', 'Jenner', 26)
+
 while True:
     ret,img = cam.read()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -30,14 +34,17 @@ while True:
 
     for (x, y, w, h) in faces:
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        k = cv2.waitKey(10) & 0xff
-        if ct != 10:
-            ct +=1
-            faceT = FaceTrainer('Kobe', 'Bryant', 36)
-            faceT.trainFace(img)
-        else:
-            trainer.train()
-            break
+        if(keyboard.is_pressed('a')):
+            if ct != 10:
+                ct +=1
+                data.append(img)
+            else:
+                ct+=1
+                faceT.trainFace(data)
+                trainer.train()
+    print(ct)
+    if ct == 11:
+        break
 
     k = cv2.waitKey(10) & 0xff
     cv2.imshow('video',img)

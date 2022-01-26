@@ -24,18 +24,19 @@ class FaceTrainer:
         self.encodedData = None
 
     def trainFace(self,image_): #STILL TODO
-        image = cv2.cvtColor(image_, cv2.COLOR_BGR2GRAY)
-        face_locations = detector.detectMultiScale(image)
-        for faces in face_locations:
-            x, y, w, h = faces
-            face = image[y:y+h,x:x+w]
-            self.encodedData = base64.b64encode(cv2.imencode('.jpg',face)[1]).decode("utf-8")
-            self.trainingdata.append(self.encodedData)
-            self.__insertToDatabase()
-            self.__addUser()
-            #imgdata = base64.b64decode(self.encodedData)
-            #imageJPG = Image.open(io.BytesIO(imgdata))
-            #imageJPG.show()
+        for img in image_:
+            image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            face_locations = detector.detectMultiScale(image)
+            for faces in face_locations:
+                x, y, w, h = faces
+                face = image[y:y+h,x:x+w]
+                self.encodedData = base64.b64encode(cv2.imencode('.jpg',face)[1]).decode("utf-8")
+                self.trainingdata.append(self.encodedData)
+        self.__insertToDatabase()
+        self.__addUser()
+                #imgdata = base64.b64decode(self.encodedData)
+                #imageJPG = Image.open(io.BytesIO(imgdata))
+                #imageJPG.show()
 
     def __insertToDatabase(self):
         db = ObjectsManager.getDatabaseManager().getDatabaseService().getDatabase()['users_whitelisted']

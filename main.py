@@ -47,7 +47,7 @@ while True:
 
         id, confidence = recognizer.predict(gray[y:y + h, x:x + w])
         print(confidence)
-        if (confidence < 60):
+        if (confidence < 60 and len(obj.getUserManager().getUsers()) > 0):
             userInfo = obj.getUserManager().getUser(id)
             user = userInfo.getName() + " " + userInfo.getLastname() + " " + str(userInfo.getAge())
             confidence = "  {0}%".format(round(100 - confidence))
