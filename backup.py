@@ -19,8 +19,11 @@ ct = 0
 
 trainer = TrainerManager()
 
+obj.getUserManager().removeUser(1)
+trainer.train()
+exit(0)
 data = []
-faceT = FaceTrainer('Kendall', 'Jenner', 26)
+faceT = FaceTrainer('Eyup', '6tiic', 26)
 
 while True:
     ret,img = cam.read()

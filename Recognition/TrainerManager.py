@@ -11,7 +11,6 @@ from ObjectsManager import ObjectsManager
 class TrainerManager:
     def __init__(self):
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
-        self.data = None
 
     def train(self):
         ids = []
@@ -29,6 +28,3 @@ class TrainerManager:
             self.recognizer.write("trainer.yml") #TODO
         except Exception:
             print("No users found")
-
-    def getData(self):
-        return self.data

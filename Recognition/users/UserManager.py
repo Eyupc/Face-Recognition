@@ -3,7 +3,7 @@ import json
 import ObjectsManager
 from Database.DatabaseManager import DatabaseManager
 from Recognition.users.User import User
-
+import json as JSON
 
 class UserManager:
 
@@ -30,10 +30,25 @@ class UserManager:
         return self.__users.get(id)
 
     def removeUser(self,id):
+        self.collection.delete_one({'id':id})
         del self.__users[id]
 
-    def addUser(self, User):
-        self.__users[User.getId()] = User
 
+    def addUser(self, name,lastname,age,train_data):
+        db = self.collection
+        try:
+            userId = db.find().sort('_id', -1).limit(1)[0]['id'] + 1
+
+        except IndexError:
+            userId = 1
+        json = {
+            'id': userId,
+            'name': name,
+            'lastname': lastname,
+            'age': age,
+            'train_data': JSON.dumps(train_data)
+        }
+        db.insert_one(json)
+        self.__users[userId] = User
 
 

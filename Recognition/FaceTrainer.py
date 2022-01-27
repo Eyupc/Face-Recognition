@@ -32,28 +32,11 @@ class FaceTrainer:
                 face = image[y:y+h,x:x+w]
                 self.encodedData = base64.b64encode(cv2.imencode('.jpg',face)[1]).decode("utf-8")
                 self.trainingdata.append(self.encodedData)
-        self.__insertToDatabase()
         self.__addUser()
                 #imgdata = base64.b64decode(self.encodedData)
                 #imageJPG = Image.open(io.BytesIO(imgdata))
                 #imageJPG.show()
 
-    def __insertToDatabase(self):
-        db = ObjectsManager.getDatabaseManager().getDatabaseService().getDatabase()['users_whitelisted']
-        try:
-            self.id = db.find().sort('_id', -1).limit(1)[0]['id'] + 1
-
-        except IndexError:
-            self.id = 1
-        json = {
-            'id': self.id,
-            'name': self.name,
-            'lastname': self.lastname,
-            'age': self.age,
-            'train_data': JSON.dumps(self.trainingdata)
-        }
-        db.insert_one(json)
-
     def __addUser(self):
-        ObjectsManager.getUserManager().addUser(User(self.id,self.name,self.lastname,self.age,self.trainingdata))
+        ObjectsManager.getUserManager().addUser(self.name,self.lastname,self.age,self.trainingdata)
 
