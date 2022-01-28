@@ -34,6 +34,7 @@ while True:
         minNeighbors=5,
         minSize=(int(minW), int(minH)),
     )
+    print(img)
 
     for (x, y, w, h) in faces:
         cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)

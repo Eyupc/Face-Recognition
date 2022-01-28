@@ -4,11 +4,11 @@ import io
 import cv2
 import json as JSON
 
+import numpy as np
 from PIL import Image
 
 from ObjectsManager import ObjectsManager
-from Recognition.users.User import User
-from Recognition.users.UserManager import UserManager
+
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
@@ -23,9 +23,19 @@ class FaceTrainer:
         self.ids = []
         self.encodedData = None
 
-    def trainFace(self,image_): #STILL TODO
+    def trainFace(self,images): #images in base64 format
+        image_ = []
+        for img_from_client in images:
+            imgdata = base64.b64decode(img_from_client)
+            imgJPG  = Image.open(io.BytesIO(imgdata))
+            image_.append(np.array(imgJPG,'uint8'))
+
         for img in image_:
-            image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            try:
+                image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            except Exception:
+                image = img
+
             face_locations = detector.detectMultiScale(image)
             for faces in face_locations:
                 x, y, w, h = faces
