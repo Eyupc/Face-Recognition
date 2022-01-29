@@ -2,11 +2,12 @@
 import cv2
 import cv2.data
 import keyboard as keyboard
+import numpy as np
 
 from ObjectsManager import ObjectsManager
 from Recognition.FaceTrainer import FaceTrainer
 from Recognition.TrainerManager import TrainerManager
-
+from mss import mss
 class Main:
     def __init__(self):
         self.obj = ObjectsManager()
@@ -22,10 +23,13 @@ class Main:
         self.minW = 0.1 * self.cam.get(3)
         self.minH = 0.1 * self.cam.get(4)
         self.font = cv2.FONT_HERSHEY_SIMPLEX
-
+        #self.bounding_box = {'top': 100, 'left': 1000, 'width': 900 , 'height': 540}
+#
+        #self.sct = mss()
     def run(self):
         while True:
             ret,img = self.cam.read()
+            #img = np.array(self.sct.grab(self.bounding_box))
             gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             faces = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml').detectMultiScale(
                 gray,
@@ -39,7 +43,7 @@ class Main:
                 if(len(self.obj.getUserManager().getUsers()) > 0):
                     id, confidence = self.recognizer.predict(gray[y:y + h, x:x + w])
                     print(confidence)
-                    if (confidence < 60):
+                    if confidence <= 100:
                         userInfo = self.obj.getUserManager().getUser(id)
                         user = userInfo.getName() + " " + userInfo.getLastname() + " " + str(userInfo.getAge())
                         confidence = "  {0}%".format(round(100 - confidence))

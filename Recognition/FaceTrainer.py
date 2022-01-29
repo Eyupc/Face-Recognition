@@ -1,6 +1,5 @@
 import base64
 import io
-
 import cv2
 import json as JSON
 
@@ -35,12 +34,11 @@ class FaceTrainer:
                 image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             except Exception:
                 image = img
-
             face_locations = detector.detectMultiScale(image)
             for faces in face_locations:
                 x, y, w, h = faces
                 face = image[y:y+h,x:x+w]
-                self.encodedData = base64.b64encode(cv2.imencode('.jpg',face)[1]).decode("utf-8")
+                self.encodedData = base64.b64encode(cv2.imencode('.jpg',cv2.resize(face,(100,100)))[1]).decode("utf-8")
                 self.trainingdata.append(self.encodedData)
         self.__addUser()
                 #imgdata = base64.b64decode(self.encodedData)

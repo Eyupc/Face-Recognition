@@ -1,54 +1,42 @@
-
+import numpy as np
 import cv2
-import cv2.data
-import keyboard
+import os
 
-from ObjectsManager import ObjectsManager
-from Recognition.FaceTrainer import FaceTrainer
-from Recognition.TrainerManager import TrainerManager
+# Check if folder exists
+if not os.path.exists('images'):
+    os.makedirs('images')
 
-
-obj = ObjectsManager()
-
+faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
 cam = cv2.VideoCapture(0)
 cam.set(3,640)
 cam.set(4,480)
-minW = 0.1 * cam.get(3)
-minH = 0.1 * cam.get(4)
-ct = 0
+count = 0
 
-trainer = TrainerManager()
+face_detector = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
+# For each person, enter one unique numeric face id
+face_id = input('\n enter user id (MUST be an integer) and press <return> -->  ')
+print("\n [INFO] Initializing face capture. Look the camera and wait ...")
 
-obj.getUserManager().removeUser(1)
-trainer.train()
-exit(0)
-data = []
-faceT = FaceTrainer('Eyup', '6tiic', 26)
 
-while True:
-    ret,img = cam.read()
+while(True):
+    ret, img = cam.read()
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml').detectMultiScale(
-        gray,
-        scaleFactor=1.2,
-        minNeighbors=5,
-        minSize=(int(minW), int(minH)),
-    )
-    print(img)
-
-    for (x, y, w, h) in faces:
-        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
-        if(keyboard.is_pressed('a')):
-            if ct != 10:
-                ct +=1
-                data.append(img)
-            else:
-                ct+=1
-                faceT.trainFace(data)
-                trainer.train()
-    print(ct)
-    if ct == 11:
+    faces = faceCascade.detectMultiScale(gray, 1.3, 5)
+    for (x,y,w,h) in faces:
+        #cv2.rectangle(img, (x,y), (x+w,y+h), (255,0,0), 2)
+        count += 1
+        # Save the captured image into the images directory
+        cv2.imwrite("./images/" + str(count) + ".jpg", img)
+        cv2.imshow('image', img)
+    # Press Escape to end the program.
+    k = cv2.waitKey(100) & 0xff
+    if k < 30:
         break
+    # Take 30 face samples and stop video. You may increase or decrease the number of
+    # images. The more the better while training the model.
+    elif count >= 10:
+         break
 
-    k = cv2.waitKey(10) & 0xff
-    cv2.imshow('video',img)
+print("\n [INFO] Exiting Program.")
+cam.release()
+cv2.destroyAllWindows()

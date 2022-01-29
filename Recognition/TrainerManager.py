@@ -23,8 +23,9 @@ class TrainerManager:
                 ids.append(user.getId())
 
         try:
-            self.recognizer.train(train_data, np.fromiter(ids,dtype=int))
-            print(self.recognizer)
+            self.recognizer.train(train_data, np.asarray(ids))
+
+            #print(self.recognizer)
             self.recognizer.write("trainer.yml") #TODO
         except Exception:
             print("No users found")
