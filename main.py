@@ -63,3 +63,5 @@ class Main:
 
 main = Main()
 main.run()
+
+#TODO FOTOS EXPERIMENTEREN

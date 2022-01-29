@@ -8,6 +8,7 @@ from PIL import Image
 from ObjectsManager import ObjectsManager
 
 
+
 class TrainerManager:
     def __init__(self):
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
@@ -19,6 +20,7 @@ class TrainerManager:
 
             for train in user.getTrainData():
                 img = Image.open(io.BytesIO(base64.b64decode(train)))
+                #img.show()
                 train_data.append(np.array(img,'uint8'))
                 ids.append(user.getId())
 
