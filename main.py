@@ -17,7 +17,7 @@ class Main:
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
         self.recognizer.read('trainer.yml')
 
-        self.cam = cv2.VideoCapture(0)
+        self.cam = cv2.VideoCapture(0 + cv2.CAP_DSHOW)
         self.cam.set(3,640)
         self.cam.set(4,480)
         self.minW = 0.1 * self.cam.get(3)

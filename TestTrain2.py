@@ -29,7 +29,7 @@ for imagePath in imagePaths:
         #imageJPG = Image.open(io.BytesIO(imgdata))
         #imageJPG.show()
 
-ft = FaceTrainer("Eyup","TIC",22)
+ft = FaceTrainer("Eyup","Cakir",22)
 #print(len(faceSamples))
 ft.trainFace(faceSamples)
 
