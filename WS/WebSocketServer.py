@@ -6,6 +6,9 @@ from asyncio import sleep
 
 import websockets
 
+from ObjectsManager import ObjectsManager
+from WS.WebSocketManager import WebSocketManager
+
 class WebSocketServer(Thread):
     def __init__(self, address, port):
         Thread.__init__(self)
@@ -19,25 +22,18 @@ class WebSocketServer(Thread):
         loop.run_forever()
 
 
-    async def ws_handler(self, websocket, path):
-        # simulate work
-        print("doing some work")
-        await sleep(5)
-        print("Sending data")
-        data = json.dumps({"test": "test test"})
-        try:
-            await websocket.send(data)
-            result = await websocket.recv()
-            print(result)
-            result = json.loads(result)
-            print(f"json: {result}")
-        except websockets.ConnectionClosed:
-            print(f"Terminated")
-            return
 
-ws = WebSocketServer("localhost",6969)
-thr = Thread(target=ws.run,daemon=True)
-thr.start()
-while True:
-    print('aaa')
+    async def ws_handler(self, websocket, path):
+        while True:
+            await sleep(1)
+            try:
+                result = await websocket.recv()
+                data = json.loads(result)
+                Event = ObjectsManager.getIncomingerManager().getEvent(data['header'])
+                Event(websocket,data['header'],data['data'][0]) #voer event uit
+                print(WebSocketManager.getClients())
+            except websockets.ConnectionClosed:
+                WebSocketManager.removeClientByWS(websocket)
+                print(f"Terminated")
+                return
 

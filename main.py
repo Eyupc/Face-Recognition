@@ -1,3 +1,5 @@
+import asyncio
+from threading import Thread
 
 import cv2
 import cv2.data
@@ -8,11 +10,20 @@ from ObjectsManager import ObjectsManager
 from Recognition.FaceTrainer import FaceTrainer
 from Recognition.TrainerManager import TrainerManager
 from mss import mss
+
+from WS.WebSocketManager import WebSocketManager
+from WS.WebSocketServer import WebSocketServer
+
+
 class Main:
     def __init__(self):
         self.obj = ObjectsManager()
         self.trainer = TrainerManager()
         self.trainer.train()
+
+        self.WebSocketServer = WebSocketServer("localhost", 6969)
+        self.thread = Thread(target=self.WebSocketServer.run, daemon=True)
+        self.thread.start()
 
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
         self.recognizer.read('trainer.yml')
@@ -24,9 +35,9 @@ class Main:
         self.minH = 0.1 * self.cam.get(4)
         self.font = cv2.FONT_HERSHEY_SIMPLEX
         #self.bounding_box = {'top': 100, 'left': 1000, 'width': 900 , 'height': 540}
-#
+
         #self.sct = mss()
-    def run(self):
+    async def run(self):
         while True:
             ret,img = self.cam.read()
             #img = np.array(self.sct.grab(self.bounding_box))
@@ -58,10 +69,13 @@ class Main:
             if k == 27:
                 break
 
+            for v in WebSocketManager.getClients().values():
+                print("ss")
+                await v.send(str(img))
+
             cv2.imshow('video',img)
 
 
 main = Main()
-main.run()
-
+asyncio.run(main.run())
 #TODO FOTOS EXPERIMENTEREN
