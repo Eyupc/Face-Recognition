@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import threading
 from threading import Thread
 
 import cv2
@@ -24,7 +25,7 @@ class Main:
         self.trainer.train()
 
         self.WebSocketServer = WebSocketServer("localhost", 6969)
-        self.thread = Thread(target=self.WebSocketServer.run, daemon=True)
+        self.thread = Thread(target=self.WebSocketServer.run)
         self.thread.start()
 
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
@@ -40,7 +41,7 @@ class Main:
 
         # self.sct = mss()
 
-    def run(self):
+    async def run(self):
         while True:
             ret, img = self.cam.read()
             # img = np.array(self.sct.grab(self.bounding_box))
@@ -74,14 +75,18 @@ class Main:
                 break
 
             base64_str = str(base64.b64encode(cv2.imencode('.jpg', img)[1]).decode("utf-8"))
-            asyncio.ensure_future(self.sendStream(base64_str))
+            await self.sendStream(base64_str)
             cv2.imshow('video', img)
 
     async def sendStream(self, img):#TODO
-        for v in WebSocketManager.getClients().values():
-            await v.send(img)
-
+        #print(threading.enumerate())
+        clients = WebSocketManager.getClients().values()
+        for v in clients:
+            try:
+                await v.send(img)
+            except Exception as e:
+                print("Error: " + str(e))
 
 main = Main()
-main.run()
+asyncio.get_event_loop().run_until_complete(main.run())
 # TODO FOTOS EXPERIMENTERE
