@@ -25,13 +25,11 @@ class WebSocketServer(Thread):
 
     async def ws_handler(self, websocket, path):
         while True:
-            await sleep(1)
             try:
                 result = await websocket.recv()
                 data = json.loads(result)
                 Event = ObjectsManager.getIncomingerManager().getEvent(data['header'])
-                Event(websocket,data['header'],data['data'][0]) #voer event uit
-                print(WebSocketManager.getClients())
+                Event(websocket,data['header'],data['data'][0])
             except websockets.ConnectionClosed:
                 WebSocketManager.removeClientByWS(websocket)
                 print(f"Terminated")

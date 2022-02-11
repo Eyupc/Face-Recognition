@@ -2,6 +2,7 @@ import asyncio
 import base64
 import threading
 from threading import Thread
+from time import sleep
 
 import cv2
 import cv2.data
@@ -37,6 +38,7 @@ class Main:
         self.minW = 0.1 * self.cam.get(3)
         self.minH = 0.1 * self.cam.get(4)
         self.font = cv2.FONT_HERSHEY_SIMPLEX
+        self.loop = asyncio.new_event_loop()
         # self.bounding_box = {'top': 100, 'left': 1000, 'width': 900 , 'height': 540}
 
         # self.sct = mss()
@@ -73,20 +75,11 @@ class Main:
             k = cv2.waitKey(10) & 0xff
             if k == 27:
                 break
-
             base64_str = str(base64.b64encode(cv2.imencode('.jpg', img)[1]).decode("utf-8"))
-            await self.sendStream(base64_str)
+
+            res = await WebSocketManager.sendBroadcast(base64_str)
             cv2.imshow('video', img)
 
-    async def sendStream(self, img):#TODO
-        #print(threading.enumerate())
-        clients = WebSocketManager.getClients().values()
-        for v in clients:
-            try:
-                await v.send(img)
-            except Exception as e:
-                print("Error: " + str(e))
-
 main = Main()
-asyncio.get_event_loop().run_until_complete(main.run())
-# TODO FOTOS EXPERIMENTERE
+asyncio.run(main.run())
+#asyncio.get_event_loop().run_until_complete(main.run())

@@ -1,3 +1,6 @@
+import asyncio
+
+
 class WebSocketManager:
     __clients = {}
     def __init__(self):
@@ -13,8 +16,6 @@ class WebSocketManager:
     @staticmethod
     def removeClientByWS(websocket):
         for k,v in WebSocketManager.__clients.items():
-            print(k)
-            print(v)
             if v==websocket:
                 del WebSocketManager.__clients[k]
                 return
@@ -25,3 +26,18 @@ class WebSocketManager:
     @staticmethod
     def getClients():
         return WebSocketManager.__clients
+
+    @staticmethod
+    async def sendBroadcast(message):
+        clients = WebSocketManager.__clients.values()
+        res = None
+        try:
+            if(len(clients) == 1):
+                res = await list(clients)[0].send(message)
+                return res
+            elif(len(clients) > 1):
+                for ws in clients:
+                    res = ws.send(message)
+                return res
+        except Exception as e:
+            print(e)
