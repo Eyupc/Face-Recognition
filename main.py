@@ -38,12 +38,11 @@ class Main:
         self.minW = 0.1 * self.cam.get(3)
         self.minH = 0.1 * self.cam.get(4)
         self.font = cv2.FONT_HERSHEY_SIMPLEX
-        self.loop = asyncio.new_event_loop()
         # self.bounding_box = {'top': 100, 'left': 1000, 'width': 900 , 'height': 540}
 
         # self.sct = mss()
 
-    async def run(self):
+    def run(self):
         while True:
             ret, img = self.cam.read()
             # img = np.array(self.sct.grab(self.bounding_box))
@@ -75,11 +74,12 @@ class Main:
             k = cv2.waitKey(10) & 0xff
             if k == 27:
                 break
-            base64_str = str(base64.b64encode(cv2.imencode('.jpg', img)[1]).decode("utf-8"))
 
-            res = await WebSocketManager.sendBroadcast(base64_str)
             cv2.imshow('video', img)
+            base64_str = str(base64.b64encode(cv2.imencode('.jpg', img)[1]).decode("utf-8"))
+            WebSocketManager.sendBroadcast(message=base64_str.encode('utf8'))
+            sleep(0.033)
 
 main = Main()
-asyncio.run(main.run())
+main.run()
 #asyncio.get_event_loop().run_until_complete(main.run())

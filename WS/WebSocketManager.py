@@ -1,5 +1,8 @@
 import asyncio
 
+import websocket
+import websockets
+
 
 class WebSocketManager:
     __clients = {}
@@ -28,16 +31,8 @@ class WebSocketManager:
         return WebSocketManager.__clients
 
     @staticmethod
-    async def sendBroadcast(message):
-        clients = WebSocketManager.__clients.values()
-        res = None
+    def sendBroadcast(message):
         try:
-            if(len(clients) == 1):
-                res = await list(clients)[0].send(message)
-                return res
-            elif(len(clients) > 1):
-                for ws in clients:
-                    res = ws.send(message)
-                return res
+            websockets.broadcast(WebSocketManager.__clients.values(),message)
         except Exception as e:
-            print(e)
+            print("Error: " + str(e))
