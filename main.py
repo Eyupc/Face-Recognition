@@ -1,22 +1,15 @@
-import asyncio
 import base64
-import threading
 from threading import Thread
 from time import sleep
 
 import cv2
 import cv2.data
-import keyboard as keyboard
-import numpy as np
-import websockets
 
 from ObjectsManager import ObjectsManager
-from Recognition.FaceTrainer import FaceTrainer
 from Recognition.TrainerManager import TrainerManager
-from mss import mss
-
 from WS.WebSocketManager import WebSocketManager
 from WS.WebSocketServer import WebSocketServer
+from utils.TextConverter import TextConverter
 
 
 class Main:
@@ -77,8 +70,7 @@ class Main:
 
             cv2.imshow('video', img)
             base64_str = str(base64.b64encode(cv2.imencode('.jpg', img)[1]).decode("utf-8"))
-            WebSocketManager.sendBroadcast(message=base64_str.encode('utf8'))
-            sleep(0.033)
+            WebSocketManager.sendBroadcast(message=base64_str)
 
 main = Main()
 main.run()

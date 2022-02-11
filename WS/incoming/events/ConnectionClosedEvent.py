@@ -8,9 +8,8 @@ class ConnectionClosedEvent(IncomingMessage):
         self.header = header
         self.data = data
         self.websocket = websocket
-        self.execute()
 
-    def execute(self):
+    async def execute(self):
         WebSocketManager.removeClient(self.data['id'])
 
 

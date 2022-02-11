@@ -1,7 +1,6 @@
-import asyncio
-
-import websocket
 import websockets
+
+from utils.TextConverter import TextConverter
 
 
 class WebSocketManager:
@@ -10,29 +9,27 @@ class WebSocketManager:
         pass
     @staticmethod
     def addClient(id,websocket):
-        WebSocketManager.__clients[id] = websocket
+        WebSocketManager.__clients[websocket] = id
 
     @staticmethod
-    def removeClient(id):
-        del WebSocketManager.__clients[id]
+    def removeClient(ws):
+        del WebSocketManager.__clients[ws]
 
     @staticmethod
-    def removeClientByWS(websocket):
-        for k,v in WebSocketManager.__clients.items():
-            if v==websocket:
-                del WebSocketManager.__clients[k]
-                return
-
-    @staticmethod
-    def getClient(id):
-        return WebSocketManager.__clients[id]
+    def getClient(websocket):
+        return WebSocketManager.__clients[websocket]
     @staticmethod
     def getClients():
-        return WebSocketManager.__clients
+        return WebSocketManager.__clients.keys()
 
     @staticmethod
     def sendBroadcast(message):
         try:
-            websockets.broadcast(WebSocketManager.__clients.values(),message)
+            websockets.broadcast(WebSocketManager.__clients.keys(),TextConverter.encodeString(message))
         except Exception as e:
             print("Error: " + str(e))
+
+    @staticmethod
+    async def sendMessage(websocket,message:str):
+        await websocket.send(TextConverter.encodeString(message))
+

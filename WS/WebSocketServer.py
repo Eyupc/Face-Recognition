@@ -8,6 +8,8 @@ import websockets
 
 from ObjectsManager import ObjectsManager
 from WS.WebSocketManager import WebSocketManager
+from utils.TextConverter import TextConverter
+
 
 class WebSocketServer(Thread):
     def __init__(self, address, port):
@@ -15,6 +17,7 @@ class WebSocketServer(Thread):
         self.port = port
         self.address = address
     def run(self):
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         ws_server = websockets.serve(self.ws_handler, self.address, self.port)
@@ -27,11 +30,12 @@ class WebSocketServer(Thread):
         while True:
             try:
                 result = await websocket.recv()
-                data = json.loads(result)
+                data = json.loads(TextConverter.decodeBytes(bytes(result)))
                 Event = ObjectsManager.getIncomingerManager().getEvent(data['header'])
-                Event(websocket,data['header'],data['data'][0])
+                await Event(websocket,data['header'],data['data'][0]).execute()
+
             except websockets.ConnectionClosed:
-                WebSocketManager.removeClientByWS(websocket)
-                print(f"Terminated")
+                WebSocketManager.removeClient(websocket)
+                print(f"User disconnected!")
                 return
 
