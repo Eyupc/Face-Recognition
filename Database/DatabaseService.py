@@ -1,5 +1,4 @@
 import pymongo
-from pymongo.errors import ConnectionFailure
 
 
 class DatabaseService:

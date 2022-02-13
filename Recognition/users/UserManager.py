@@ -1,9 +1,9 @@
 import json
+import json as JSON
 
 import ObjectsManager
-from Database.DatabaseManager import DatabaseManager
 from Recognition.users.User import User
-import json as JSON
+
 
 class UserManager:
 

@@ -1,5 +1,4 @@
 import base64
-import io
 import os
 
 import cv2
@@ -7,7 +6,7 @@ import numpy as np
 from PIL import Image
 
 from ObjectsManager import ObjectsManager
-from Recognition.FaceTrainer import detector, FaceTrainer
+from Recognition.FaceTrainer import FaceTrainer
 
 obj = ObjectsManager()
 

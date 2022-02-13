@@ -1,6 +1,4 @@
 import base64
-from threading import Thread
-from time import sleep
 
 import cv2
 import cv2.data
@@ -9,7 +7,6 @@ from ObjectsManager import ObjectsManager
 from Recognition.TrainerManager import TrainerManager
 from WS.WebSocketManager import WebSocketManager
 from WS.WebSocketServer import WebSocketServer
-from utils.TextConverter import TextConverter
 
 
 class Main:
@@ -18,9 +15,8 @@ class Main:
         self.trainer = TrainerManager()
         self.trainer.train()
 
-        self.WebSocketServer = WebSocketServer("localhost", 6969)
-        self.thread = Thread(target=self.WebSocketServer.run)
-        self.thread.start()
+        self.WebSocketServer = WebSocketServer()
+        self.WebSocketServer.start()
 
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
         self.recognizer.read('trainer.yml')
@@ -31,6 +27,7 @@ class Main:
         self.minW = 0.1 * self.cam.get(3)
         self.minH = 0.1 * self.cam.get(4)
         self.font = cv2.FONT_HERSHEY_SIMPLEX
+        self.bool = True
         # self.bounding_box = {'top': 100, 'left': 1000, 'width': 900 , 'height': 540}
 
         # self.sct = mss()
@@ -69,9 +66,8 @@ class Main:
                 break
 
             cv2.imshow('video', img)
-            base64_str = str(base64.b64encode(cv2.imencode('.jpg', img)[1]).decode("utf-8"))
-            WebSocketManager.sendBroadcast(message=base64_str)
-
+            base64_str =  str(base64.b64encode(cv2.imencode('.jpg', img)[1]).decode("utf-8"))
+            self.WebSocketServer.ioloop.add_callback(WebSocketManager.sendBroadcast,base64_str)
 main = Main()
 main.run()
 #asyncio.get_event_loop().run_until_complete(main.run())

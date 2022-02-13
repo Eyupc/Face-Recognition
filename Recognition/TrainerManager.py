@@ -8,7 +8,6 @@ from PIL import Image
 from ObjectsManager import ObjectsManager
 
 
-
 class TrainerManager:
     def __init__(self):
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()

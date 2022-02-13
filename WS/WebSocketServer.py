@@ -1,41 +1,53 @@
-import asyncio
 import json
 import threading
-from threading import Thread
-from asyncio import sleep
 
-import websockets
+import tornado.httpserver
+import tornado.ioloop
+import tornado.web
+import tornado.websocket as ws
+from tornado.options import define, options
 
 from ObjectsManager import ObjectsManager
 from WS.WebSocketManager import WebSocketManager
 from utils.TextConverter import TextConverter
 
+define('port', default=4041, help='port to listen on')
+class WebSocketHandler(ws.WebSocketHandler):
 
-class WebSocketServer(Thread):
-    def __init__(self, address, port):
-        Thread.__init__(self)
-        self.port = port
-        self.address = address
+    LAST_IMAGE = None
+    @classmethod
+    def route_urls(cls):
+        return [(r'/', cls, {}), ]
+
+    def open(self):
+        print("New client connected")
+
+    def on_message(self, message):
+        data = json.loads(TextConverter.decodeBytes(bytes(message)))
+        Event = ObjectsManager.getIncomingerManager().getEvent(data['header'])
+        Event(self, data['header'], data['data'][0]).execute()
+
+    def on_close(self):
+        WebSocketManager.removeClient(self)
+        print("connection is closed")
+
+    def check_origin(self, origin):
+        return True
+
+
+class WebSocketServer(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self, name='WebServer')
+        self.ioloop = None
+
     def run(self):
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        ws_server = websockets.serve(self.ws_handler, self.address, self.port)
-        loop.run_until_complete(ws_server)
-        loop.run_forever()
+        self.ioloop = tornado.ioloop.IOLoop()
+        app = tornado.web.Application(WebSocketHandler.route_urls())
+        server = tornado.httpserver.HTTPServer(app)
+        server.listen(options.port)
+        self.ioloop.start()
+        self.ioloop.clear_instance()
 
-
-
-    async def ws_handler(self, websocket, path):
-        while True:
-            try:
-                result = await websocket.recv()
-                data = json.loads(TextConverter.decodeBytes(bytes(result)))
-                Event = ObjectsManager.getIncomingerManager().getEvent(data['header'])
-                await Event(websocket,data['header'],data['data'][0]).execute()
-
-            except websockets.ConnectionClosed:
-                WebSocketManager.removeClient(websocket)
-                print(f"User disconnected!")
-                return
+    def stop(self):
+        self.ioloop.add_callback(self.ioloop.stop)
 

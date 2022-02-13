@@ -9,8 +9,8 @@ class ConnectionEvent(IncomingMessage):
         self.data = data
         self.websocket = websocket
 
-    async def execute(self):
-        WebSocketManager.addClient(self.data['id'],self.websocket)
+    def execute(self):
+        WebSocketManager.addClient(self.websocket,self.data["id"])
 
 
 

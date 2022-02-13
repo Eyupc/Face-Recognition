@@ -1,5 +1,3 @@
-import pymongo.database
-
 from Database.DatabaseService import DatabaseService
 
 

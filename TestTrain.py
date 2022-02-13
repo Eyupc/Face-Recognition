@@ -1,6 +1,6 @@
-import numpy as np
-import cv2
 import os
+
+import cv2
 
 # Check if folder exists
 if not os.path.exists('images'):

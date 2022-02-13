@@ -1,13 +1,11 @@
 import base64
 import io
-import cv2
-import json as JSON
 
+import cv2
 import numpy as np
 from PIL import Image
 
 from ObjectsManager import ObjectsManager
-
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
