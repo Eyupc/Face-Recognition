@@ -67,7 +67,13 @@ class Main:
 
             cv2.imshow('video', img)
             base64_str =  str(base64.b64encode(cv2.imencode('.jpg', img)[1]).decode("utf-8"))
-            self.WebSocketServer.ioloop.add_callback(WebSocketManager.sendBroadcast,base64_str)
+            data = {
+                "header": "StreamEvent",
+                "data": [{
+                    "message": base64_str
+                }]
+            }
+            self.WebSocketServer.ioloop.add_callback(WebSocketManager.sendBroadcast,data)
 main = Main()
 main.run()
 #asyncio.get_event_loop().run_until_complete(main.run())

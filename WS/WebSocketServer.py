@@ -11,7 +11,7 @@ from ObjectsManager import ObjectsManager
 from WS.WebSocketManager import WebSocketManager
 from utils.TextConverter import TextConverter
 
-define('port', default=4041, help='port to listen on')
+define('port', default=7777, help='port to listen on')
 class WebSocketHandler(ws.WebSocketHandler):
 
     LAST_IMAGE = None
