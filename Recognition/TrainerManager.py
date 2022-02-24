@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
-from ObjectsManager import ObjectsManager
+import ObjectsManager
 
 
 class TrainerManager:
@@ -15,7 +15,8 @@ class TrainerManager:
     def train(self):
         ids = []
         train_data = []
-        for user in ObjectsManager.getUserManager().getUsers().values():
+
+        for user in ObjectsManager.ObjectsManager.getUserManager().getUsers().values():
 
             for train in user.getTrainData():
                 img = Image.open(io.BytesIO(base64.b64decode(train)))
@@ -25,7 +26,6 @@ class TrainerManager:
 
         try:
             self.recognizer.train(train_data, np.asarray(ids))
-
             #print(self.recognizer)
             self.recognizer.write("trainer.yml") #TODO
         except Exception:

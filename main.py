@@ -12,14 +12,19 @@ from WS.WebSocketServer import WebSocketServer
 class Main:
     def __init__(self):
         self.obj = ObjectsManager()
-        self.trainer = TrainerManager()
-        self.trainer.train()
+        self.obj.loadAll()
+
+        self.obj.getTrainerManager().train()
 
         self.WebSocketServer = WebSocketServer()
         self.WebSocketServer.start()
 
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
-        self.recognizer.read('trainer.yml')
+
+        try:
+            self.recognizer.read('trainer.yml')
+        except Exception:
+            print("Trainer.yml is empty!")
 
         self.cam = cv2.VideoCapture(0 + cv2.CAP_DSHOW)
         self.cam.set(3, 640)
@@ -48,9 +53,15 @@ class Main:
             for (x, y, w, h) in faces:
                 cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 if (len(self.obj.getUserManager().getUsers()) > 0):
-                    id, confidence = self.recognizer.predict(gray[y:y + h, x:x + w])
+                    id,confidence = -1,200
+
+                    try:
+                        id, confidence = self.recognizer.predict(gray[y:y + h, x:x + w])
+                    except Exception as e:
+                        print(e)
+
                     # print(confidence)
-                    if confidence <= 100:
+                    if confidence <= 90:
                         userInfo = self.obj.getUserManager().getUser(id)
                         user = userInfo.getName() + " " + userInfo.getLastname() + " " + str(userInfo.getAge())
                         confidence = "  {0}%".format(round(100 - confidence))
@@ -73,7 +84,7 @@ class Main:
                     "message": base64_str
                 }]
             }
-            self.WebSocketServer.ioloop.add_callback(WebSocketManager.sendBroadcast,data)
+            self.WebSocketServer.ioloop.add_callback(WebSocketManager.sendBroadcast,data,"StreamPage")
 main = Main()
 main.run()
 #asyncio.get_event_loop().run_until_complete(main.run())

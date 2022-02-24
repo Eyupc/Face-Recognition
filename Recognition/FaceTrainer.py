@@ -1,3 +1,4 @@
+import asyncio
 import base64
 import io
 
@@ -5,7 +6,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
-from ObjectsManager import ObjectsManager
+import ObjectsManager
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
@@ -21,6 +22,7 @@ class FaceTrainer:
         self.encodedData = None
 
     def trainFace(self,images): #images in base64 format
+        count = 0
         image_ = []
         for img_from_client in images:
             imgdata = base64.b64decode(img_from_client)
@@ -32,17 +34,22 @@ class FaceTrainer:
                 image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             except Exception:
                 image = img
-            face_locations = detector.detectMultiScale(image)
+            face_locations = detector.detectMultiScale(image,
+                                                       scaleFactor=1.2,
+                                                       minNeighbors=5,
+                                                       minSize=(30, 30)
+                                                       )
             for faces in face_locations:
+                count +=1
                 x, y, w, h = faces
                 face = image[y:y+h,x:x+w]
                 self.encodedData = base64.b64encode(cv2.imencode('.jpg',cv2.resize(face,(100,100)))[1]).decode("utf-8")
                 self.trainingdata.append(self.encodedData)
         self.__addUser()
-                #imgdata = base64.b64decode(self.encodedData)
-                #imageJPG = Image.open(io.BytesIO(imgdata))
-                #imageJPG.show()
+        return count
+
+
 
     def __addUser(self):
-        ObjectsManager.getUserManager().addUser(self.name,self.lastname,self.age,self.trainingdata)
-
+        ObjectsManager.ObjectsManager.getUserManager().addUser(self.name,self.lastname,self.age,self.trainingdata)
+        ObjectsManager.ObjectsManager.getTrainerManager().train()

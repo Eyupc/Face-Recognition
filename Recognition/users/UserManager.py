@@ -49,6 +49,6 @@ class UserManager:
             'train_data': JSON.dumps(train_data)
         }
         db.insert_one(json)
-        self.__users[userId] = User
+        self.__users[userId] = User(userId,name,lastname,age,train_data)
 
 

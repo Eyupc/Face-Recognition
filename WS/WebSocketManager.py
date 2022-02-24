@@ -5,8 +5,11 @@ class WebSocketManager:
         pass
 
     @staticmethod
-    def addClient(websocket, id):
-        WebSocketManager.__clients[websocket] = id
+    def addClient(websocket, id,page):
+        WebSocketManager.__clients[websocket] = {
+            "id":id,
+            "page":page
+        }
 
     @staticmethod
     def removeClient(websocket):
@@ -15,7 +18,7 @@ class WebSocketManager:
     @staticmethod
     def getClient(id):
         clients = WebSocketManager.__clients
-        return list(clients.keys())[list(clients.values()).index(id)]
+        return list(clients.keys())[list(clients.values()).index(id)] #TODO
 
     @staticmethod
     def getId(websocket):
@@ -26,12 +29,13 @@ class WebSocketManager:
         return WebSocketManager.__clients.keys()
 
     @staticmethod
-    def sendBroadcast(message):
+    def sendBroadcast(message,page):
         clients = WebSocketManager.__clients.keys()
         try:
             for client in clients:
                 if client.ws_connection.stream.socket:
-                    client.write_message(message, binary=True)
+                    if WebSocketManager.__clients[client]["page"] is page:
+                        client.write_message(message, binary=True)
         except Exception as e:
             print("Error: " + str(e))
 

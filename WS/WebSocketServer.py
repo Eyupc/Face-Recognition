@@ -15,6 +15,7 @@ define('port', default=7777, help='port to listen on')
 class WebSocketHandler(ws.WebSocketHandler):
 
     LAST_IMAGE = None
+
     @classmethod
     def route_urls(cls):
         return [(r'/', cls, {}), ]
