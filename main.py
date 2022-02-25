@@ -32,10 +32,13 @@ class Main:
         self.minW = 0.1 * self.cam.get(3)
         self.minH = 0.1 * self.cam.get(4)
         self.font = cv2.FONT_HERSHEY_SIMPLEX
-        self.bool = True
+        self.last_users_count = 0
         # self.bounding_box = {'top': 100, 'left': 1000, 'width': 900 , 'height': 540}
 
         # self.sct = mss()
+
+    def updateReader(self):
+        self.recognizer.read("trainer.yml")
 
     def run(self):
         while True:
@@ -53,6 +56,9 @@ class Main:
             for (x, y, w, h) in faces:
                 cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 if (len(self.obj.getUserManager().getUsers()) > 0):
+                    if(self.last_users_count < len(self.obj.getUserManager().getUsers())):
+                        self.updateReader()
+                        self.last_users_count = len(self.obj.getUserManager().getUsers())
                     id,confidence = -1,200
 
                     try:
@@ -61,7 +67,7 @@ class Main:
                         print(e)
 
                     # print(confidence)
-                    if confidence <= 90:
+                    if confidence <= 100:
                         userInfo = self.obj.getUserManager().getUser(id)
                         user = userInfo.getName() + " " + userInfo.getLastname() + " " + str(userInfo.getAge())
                         confidence = "  {0}%".format(round(100 - confidence))

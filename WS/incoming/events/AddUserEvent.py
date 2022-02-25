@@ -10,7 +10,7 @@ class AddUserEvent(IncomingMessage):
         self.websocket = websocket
 
     def execute(self):
-        print(self.data)
+        #print(self.data)
         ft = FaceTrainer(self.data["name"],self.data["lastname"],self.data["age"])
         faces = ft.trainFace(self.data["images"])
         self.websocket.write_message(str(faces))

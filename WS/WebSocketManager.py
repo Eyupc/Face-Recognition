@@ -34,7 +34,7 @@ class WebSocketManager:
         try:
             for client in clients:
                 if client.ws_connection.stream.socket:
-                    if WebSocketManager.__clients[client]["page"] is page:
+                    if WebSocketManager.__clients[client]["page"] == page:
                         client.write_message(message, binary=True)
         except Exception as e:
             print("Error: " + str(e))
