@@ -9,13 +9,13 @@ from tornado.options import define, options
 
 from ObjectsManager import ObjectsManager
 from WS.WebSocketManager import WebSocketManager
+from WS.incoming.IManager import IncomingManager
 from utils.TextConverter import TextConverter
-
 define('port', default=7777, help='port to listen on')
 class WebSocketHandler(ws.WebSocketHandler):
 
     LAST_IMAGE = None
-
+    __incomingManager = IncomingManager()
     @classmethod
     def route_urls(cls):
         return [(r'/', cls, {}), ]
@@ -25,7 +25,7 @@ class WebSocketHandler(ws.WebSocketHandler):
 
     def on_message(self, message):
         data = json.loads(TextConverter.decodeBytes(bytes(message)))
-        Event = ObjectsManager.getIncomingerManager().getEvent(data['header'])
+        Event = WebSocketHandler.__incomingManager.getEvent(data['header'])
         Event(self, data['header'], data['data'][0]).execute()
 
     def on_close(self):

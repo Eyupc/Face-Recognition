@@ -1,6 +1,8 @@
 import asyncio
 import base64
 import io
+import time
+from time import sleep
 
 import cv2
 import numpy as np
@@ -45,11 +47,13 @@ class FaceTrainer:
                 face = image[y:y+h,x:x+w]
                 self.encodedData = base64.b64encode(cv2.imencode('.jpg',cv2.resize(face,(100,100)))[1]).decode("utf-8")
                 self.trainingdata.append(self.encodedData)
-        self.__addUser()
+        if(count > 0):
+            self.__addUser()
         return count
 
-
-
     def __addUser(self):
-        ObjectsManager.ObjectsManager.getUserManager().addUser(self.name,self.lastname,self.age,self.trainingdata)
-        ObjectsManager.ObjectsManager.getTrainerManager().train()
+        import main
+        from ObjectsManager import ObjectsManager
+        ObjectsManager.getUserManager().addUser(self.name,self.lastname,self.age,self.trainingdata)
+        ObjectsManager.getTrainerManager().train()
+        main.updateReader()

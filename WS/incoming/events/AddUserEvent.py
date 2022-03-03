@@ -1,4 +1,8 @@
+import asyncio
+import json
+
 from Recognition.FaceTrainer import FaceTrainer
+from WS.WebSocketManager import WebSocketManager
 from WS.incoming.IncomingMessage import IncomingMessage
 
 
@@ -13,7 +17,15 @@ class AddUserEvent(IncomingMessage):
         #print(self.data)
         ft = FaceTrainer(self.data["name"],self.data["lastname"],self.data["age"])
         faces = ft.trainFace(self.data["images"])
-        self.websocket.write_message(str(faces))
+        data = {
+            "header":"AddUserEvent",
+            "data":[{
+                "id":WebSocketManager.getId(self.websocket),
+                "faces_count":str(faces)
+            }]
+        }
+        #print(faces)
+        WebSocketManager.sendMessage(websocket=self.websocket,message=json.dumps(data))
 
 
 

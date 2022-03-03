@@ -22,7 +22,7 @@ class WebSocketManager:
 
     @staticmethod
     def getId(websocket):
-        return WebSocketManager.__clients[websocket]
+        return WebSocketManager.__clients[websocket]["id"]
 
     @staticmethod
     def getClients():
