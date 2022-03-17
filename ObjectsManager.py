@@ -8,7 +8,7 @@ class ObjectsManager:
     __userManager = UserManager
     __trainerManager = TrainerManager
     def __init__(self):
-        pass
+        self.loadAll()
 
     def loadAll(self):
         ObjectsManager.__databaseManager = DatabaseManager()

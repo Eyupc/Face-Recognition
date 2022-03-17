@@ -1,3 +1,6 @@
+import tornado
+
+
 class WebSocketManager:
     __clients = {}
 
@@ -10,6 +13,10 @@ class WebSocketManager:
             "id":id,
             "page":page
         }
+
+    @staticmethod
+    def setPage(websocket,page):
+        WebSocketManager.__clients[websocket]["page"] = page #TODO
 
     @staticmethod
     def removeClient(websocket):

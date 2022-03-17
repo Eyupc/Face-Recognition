@@ -11,6 +11,7 @@ class UserManager:
         self.collection = ObjectsManager.DatabaseManager().getDatabaseService().getDatabase()['users_whitelisted']
         self.__users = {}
         self.__registerUsers()
+        print("ok")
 
     def __registerUsers(self):
         cursor = self.collection.find({})
@@ -30,9 +31,12 @@ class UserManager:
         return self.__users.get(id)
 
     def removeUser(self,id):
-        self.collection.delete_one({'id':id})
-        del self.__users[id]
-
+        #self.collection.delete_one({'id':id})
+        if self.__users[id]:
+            del self.__users[id]
+            return True
+        else:
+            return False
 
     def addUser(self, name,lastname,age,train_data):
         db = self.collection

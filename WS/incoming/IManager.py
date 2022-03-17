@@ -2,6 +2,7 @@ from WS.incoming.events.AddUserEvent import AddUserEvent
 from WS.incoming.events.ConnectionClosedEvent import ConnectionClosedEvent
 from WS.incoming.events.ConnectionEvent import ConnectionEvent
 from WS.incoming.events.PingEvent import PingEvent
+from WS.incoming.events.DeleteUserEvent import DeleteUserEvent
 
 
 class IncomingManager:
@@ -14,5 +15,6 @@ class IncomingManager:
         self.events["ConnectionClosedEvent"] = ConnectionClosedEvent
         self.events["PingEvent"] = PingEvent
         self.events["AddUserEvent"] = AddUserEvent
+        self.events["DeleteUserEvent"] = DeleteUserEvent
     def getEvent(self,event):
         return self.events[event]

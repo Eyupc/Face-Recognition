@@ -13,8 +13,6 @@ from WS.WebSocketServer import WebSocketServer
 class Main:
     def __init__(self):
         self.obj = ObjectsManager()
-        self.obj.loadAll()
-
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
         self.obj.getTrainerManager().train()
 
