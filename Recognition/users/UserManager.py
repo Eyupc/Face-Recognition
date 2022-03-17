@@ -11,7 +11,6 @@ class UserManager:
         self.collection = ObjectsManager.DatabaseManager().getDatabaseService().getDatabase()['users_whitelisted']
         self.__users = {}
         self.__registerUsers()
-        print("ok")
 
     def __registerUsers(self):
         cursor = self.collection.find({})

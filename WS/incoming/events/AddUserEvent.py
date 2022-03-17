@@ -14,7 +14,6 @@ class AddUserEvent(IncomingMessage):
         self.websocket = websocket
 
     def execute(self):
-        #print(self.data)
         ft = FaceTrainer(self.data["name"],self.data["lastname"],self.data["age"])
         faces = ft.trainFace(self.data["images"])
         data = {
@@ -26,7 +25,6 @@ class AddUserEvent(IncomingMessage):
         }
         #print(faces)
         WebSocketManager.sendMessage(websocket=self.websocket,message=json.dumps(data))
-
 
 
 

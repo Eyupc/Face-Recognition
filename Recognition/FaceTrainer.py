@@ -1,14 +1,10 @@
-import asyncio
 import base64
 import io
-import time
-from time import sleep
 
 import cv2
 import numpy as np
 from PIL import Image
 
-import ObjectsManager
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
 detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
@@ -52,8 +48,8 @@ class FaceTrainer:
         return count
 
     def __addUser(self):
-        import main
+        from main import Main
         from ObjectsManager import ObjectsManager
         ObjectsManager.getUserManager().addUser(self.name,self.lastname,self.age,self.trainingdata)
         ObjectsManager.getTrainerManager().train()
-        main.updateReader()
+        ObjectsManager.getMain().updateReader()

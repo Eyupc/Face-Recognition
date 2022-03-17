@@ -1,7 +1,4 @@
-import asyncio
-import json
-
-from Recognition.FaceTrainer import FaceTrainer
+from Recognition.TrainerManager import TrainerManager
 from WS.WebSocketManager import WebSocketManager
 from WS.incoming.IncomingMessage import IncomingMessage
 
@@ -14,18 +11,19 @@ class DeleteUserEvent(IncomingMessage):
         self.websocket = websocket
 
     def execute(self):
-        #print(self.data)
         from ObjectsManager import ObjectsManager
-        import main
-        #print(ObjectsManager.getUserManager().getUsers())
+        result = ObjectsManager.getUserManager().removeUser(self.data["user_id"])
+        TrainerManager().train()
+        ObjectsManager.getMain().updateReader()
         data = {
             "header":"DeleteUserEvent",
             "data":[{
                 "id":WebSocketManager.getId(self.websocket),
-                "status": "result"
+                "status": str(result)
             }]
         }
-        WebSocketManager.sendMessage(websocket=self.websocket,message=json.dumps(data))
+
+       # WebSocketManager.sendMessage(websocket=self.websocket,message=json.dumps(data))
 
 
 

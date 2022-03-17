@@ -16,7 +16,7 @@ class WebSocketManager:
 
     @staticmethod
     def setPage(websocket,page):
-        WebSocketManager.__clients[websocket]["page"] = page #TODO
+        WebSocketManager.__clients[websocket]["page"] = page
 
     @staticmethod
     def removeClient(websocket):
@@ -25,7 +25,7 @@ class WebSocketManager:
     @staticmethod
     def getClient(id):
         clients = WebSocketManager.__clients
-        return list(clients.keys())[list(clients.values()).index(id)] #TODO
+        return list(clients.keys())[list(clients.values()).index(id)]
 
     @staticmethod
     def getId(websocket):

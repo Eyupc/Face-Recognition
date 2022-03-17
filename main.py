@@ -4,21 +4,21 @@ import threading
 
 import cv2
 import cv2.data
-
-from ObjectsManager import ObjectsManager
+import time
 from WS.WebSocketManager import WebSocketManager
-from WS.WebSocketServer import WebSocketServer
 
 
 class Main:
     def __init__(self):
-        self.obj = ObjectsManager()
+        from WS.WebSocketServer import WebSocketServer
+        from ObjectsManager import ObjectsManager
         self.recognizer = cv2.face.LBPHFaceRecognizer_create()
+
+        self.obj = ObjectsManager
         self.obj.getTrainerManager().train()
 
         self.WebSocketServer = WebSocketServer()
         self.WebSocketServer.start()
-
         try:
             self.recognizer.read('trainer.yml')
         except Exception:
@@ -27,13 +27,19 @@ class Main:
         self.cam = cv2.VideoCapture(0 + cv2.CAP_DSHOW)
         self.cam.set(3, 640)
         self.cam.set(4, 480)
-        self.minW = 0.1 * self.cam.get(3)
-        self.minH = 0.1 * self.cam.get(4)
+        self.minW = 0.2 * self.cam.get(3)
+        self.minH = 0.2 * self.cam.get(4)
         self.font = cv2.FONT_HERSHEY_SIMPLEX
+        self.startTime()
 
         # self.bounding_box = {'top': 100, 'left': 1000, 'width': 900 , 'height': 540}
 
         # self.sct = mss()
+
+    def startTime(self):
+        from ObjectsManager import ObjectsManager
+        collection = ObjectsManager.getDatabaseManager().getDatabaseService().getDatabase()['config']
+        collection.update_one({}, {'$set': {'start_time': time.time()}})
 
     def updateReader(self):
         self.recognizer = None
@@ -76,7 +82,7 @@ class Main:
                         cv2.putText(img, str(user), (x + 5, y - 5), self.font, 1, (255, 255, 255), 2)
                         cv2.putText(img, str(confidence), (x + 5, y + h - 5), self.font, 1, (255, 255, 0), 1)
             except Exception as e:
-                print(e)
+                print("[INFO/ERROR] Updating Trainer.yml...\r\n Reason: " + str(e))
                 pass
 
             k = cv2.waitKey(10) & 0xff
@@ -95,11 +101,8 @@ class Main:
             self.WebSocketServer.ioloop.add_callback(WebSocketManager.sendBroadcast, data, "StreamPage")
 
 
-main = Main()
-mainRun = threading.Thread(target=main.run, name="MainRun")
-mainRun.start()
+if __name__ == "__main__":
+    from ObjectsManager import ObjectsManager
 
-
-def updateReader(): #Update reader
-    main.updateReader()
-# asyncio.get_event_loop().run_until_complete(main.run())
+    obj = ObjectsManager()
+    obj.getMain().run()

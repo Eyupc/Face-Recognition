@@ -1,12 +1,15 @@
 from Database.DatabaseManager import DatabaseManager
 from Recognition.TrainerManager import TrainerManager
 from Recognition.users.UserManager import UserManager
+from main import Main
 
 
 class ObjectsManager:
     __databaseManager = DatabaseManager
     __userManager = UserManager
     __trainerManager = TrainerManager
+
+    __Main = Main
     def __init__(self):
         self.loadAll()
 
@@ -14,6 +17,7 @@ class ObjectsManager:
         ObjectsManager.__databaseManager = DatabaseManager()
         ObjectsManager.__userManager = UserManager()
         ObjectsManager.__trainerManager = TrainerManager()
+        ObjectsManager.__Main = Main()
 
     @staticmethod
     def getDatabaseManager():
@@ -27,6 +31,9 @@ class ObjectsManager:
     def getTrainerManager():
         return ObjectsManager.__trainerManager
 
+    @staticmethod
+    def getMain():
+        return ObjectsManager.__Main
     @staticmethod
     def getInstance():
         return
