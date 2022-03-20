@@ -60,7 +60,7 @@ class Main:
             )
             try:
                 for (x, y, w, h) in faces:
-                    cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                    cv2.rectangle(img, (x, y), (x + w, y + h), (0,0,255), 2)
                     if (len(self.obj.getUserManager().getUsers()) > 0):
                         id, confidence = -1, 200
                         try:
@@ -70,7 +70,7 @@ class Main:
 
                         # print(id)
                         # print(confidence)
-                        if confidence <= 100:
+                        if confidence <= 80:
                             # print("id: " + str(id))
                             userInfo = self.obj.getUserManager().getUser(id)
                             user = userInfo.getName() + " " + userInfo.getLastname() + " " + str(userInfo.getAge())
@@ -79,8 +79,13 @@ class Main:
                             user = "Unknown"
                             confidence = "  {0}%".format(round(100 - confidence))
 
-                        cv2.putText(img, str(user), (x + 5, y - 5), self.font, 1, (255, 255, 255), 2)
-                        cv2.putText(img, str(confidence), (x + 5, y + h - 5), self.font, 1, (255, 255, 0), 1)
+                        (ww, hh), _ = cv2.getTextSize(str(user), cv2.FONT_HERSHEY_SIMPLEX, 0.6, 1)
+                        img = cv2.rectangle(img, (x, y), (x + ww, y - hh - 5), (0,0,255), -1)
+                        img = cv2.putText(img, str(user), (x, y - 5),
+                                          cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255,255,255), 2)
+
+                        #cv2.putText(img, str(user), (x + 5, y - 5), self.font, 1, (255, 255, 255), 2)
+                        #cv2.putText(img, str(confidence), (x + 5, y + h - 5), self.font, 1, (255, 255, 0), 1)
             except Exception as e:
                 print("[INFO/ERROR] Updating Trainer.yml...\r\n Reason: " + str(e))
                 pass
