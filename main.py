@@ -69,8 +69,8 @@ class Main:
                             print(e)
 
                         # print(id)
-                        # print(confidence)
-                        if confidence <= 80:
+                        #print(confidence)
+                        if confidence <= 90:
                             # print("id: " + str(id))
                             userInfo = self.obj.getUserManager().getUser(id)
                             user = userInfo.getName() + " " + userInfo.getLastname() + " " + str(userInfo.getAge())
