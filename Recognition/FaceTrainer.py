@@ -48,7 +48,6 @@ class FaceTrainer:
         return count
 
     def __addUser(self):
-        from main import Main
         from ObjectsManager import ObjectsManager
         ObjectsManager.getUserManager().addUser(self.name,self.lastname,self.age,self.trainingdata)
         ObjectsManager.getTrainerManager().train()

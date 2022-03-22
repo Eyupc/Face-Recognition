@@ -11,17 +11,16 @@ from ObjectsManager import ObjectsManager
 from WS.WebSocketManager import WebSocketManager
 from WS.incoming.IManager import IncomingManager
 from utils.TextConverter import TextConverter
-define('port', default=7777, help='port to listen on')
+define('port', default=7777, help='Websocket Server Port')
 class WebSocketHandler(ws.WebSocketHandler):
 
-    LAST_IMAGE = None
     __incomingManager = IncomingManager()
     @classmethod
     def route_urls(cls):
         return [(r'/', cls, {}), ]
 
     def open(self):
-        print("New client connected")
+        print("[WS] New client connected!")
 
     def on_message(self, message):
         data = json.loads(TextConverter.decodeBytes(bytes(message)))
@@ -30,7 +29,7 @@ class WebSocketHandler(ws.WebSocketHandler):
 
     def on_close(self):
         WebSocketManager.removeClient(self)
-        print("connection is closed")
+        print("[WS] WS-Client disconnected")
 
     def check_origin(self, origin):
         return True
