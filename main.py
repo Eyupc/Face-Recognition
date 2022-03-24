@@ -1,11 +1,8 @@
-import asyncio
 import base64
-import threading
+import time
 
 import cv2
 import cv2.data
-import time
-import atexit
 
 from WS.WebSocketManager import WebSocketManager
 
@@ -26,7 +23,7 @@ class Main:
         except Exception:
             print("[INFO] Trainer.yml is empty!")
 
-        self.cam = cv2.VideoCapture(0 + cv2.CAP_DSHOW)
+        self.cam = cv2.VideoCapture(1 + cv2.CAP_DSHOW)
         self.cam.set(3, 640)
         self.cam.set(4, 480)
         self.minW = 0.2 * self.cam.get(3)
@@ -81,6 +78,7 @@ class Main:
                             # print(id)
                             # print(confidence)
                             if confidence <= 90:
+                                print(confidence)
                                 # print("id: " + str(id))
                                 userInfo = self.obj.getUserManager().getUser(id)
                                 user = userInfo.getName() + " " + userInfo.getLastname() + " " + str(userInfo.getAge())

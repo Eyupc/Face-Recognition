@@ -1,9 +1,9 @@
-from WS.incoming.events.SetPageEvent import SetPageEvent
 from WS.incoming.events.AddUserEvent import AddUserEvent
 from WS.incoming.events.ConnectionClosedEvent import ConnectionClosedEvent
 from WS.incoming.events.ConnectionEvent import ConnectionEvent
-from WS.incoming.events.PingEvent import PingEvent
 from WS.incoming.events.DeleteUserEvent import DeleteUserEvent
+from WS.incoming.events.PingEvent import PingEvent
+from WS.incoming.events.SetPageEvent import SetPageEvent
 
 
 class IncomingManager:

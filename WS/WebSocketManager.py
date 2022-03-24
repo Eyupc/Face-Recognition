@@ -1,6 +1,3 @@
-import tornado
-
-
 class WebSocketManager:
     __clients = {}
 
