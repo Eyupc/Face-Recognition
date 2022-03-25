@@ -16,6 +16,7 @@ class AddUserEvent(IncomingMessage):
     def execute(self):
         ft = FaceTrainer(self.data["name"],self.data["lastname"],self.data["age"])
         faces = ft.trainFace(self.data["images"])
+        print(len(self.data["images"]))
         data = {
             "header":"AddUserEvent",
             "data":[{
