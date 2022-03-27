@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 from PIL import Image
 
-recognizer = cv2.face.LBPHFaceRecognizer_create()
+recognizer = cv2.face.LBPHFaceRecognizer_create(threshold=5.0)
 detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
 
@@ -40,7 +40,7 @@ class FaceTrainer:
                 count +=1
                 x, y, w, h = faces
                 face = image[y:y+h,x:x+w]
-                self.encodedData = base64.b64encode(cv2.imencode('.jpg',cv2.resize(face,(100,100)))[1]).decode("utf-8")
+                self.encodedData = base64.b64encode(cv2.imencode('.jpg',cv2.resize(face,(200,200)))[1]).decode("utf-8")
                 self.trainingdata.append(self.encodedData)
         if(count > 0):
             self.__addUser()

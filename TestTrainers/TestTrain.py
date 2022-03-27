@@ -7,7 +7,7 @@ if not os.path.exists('images'):
     os.makedirs('images')
 
 faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades+'haarcascade_frontalface_default.xml')
-cam = cv2.VideoCapture(0)
+cam = cv2.VideoCapture(1 + cv2.CAP_DSHOW)
 cam.set(3,640)
 cam.set(4,480)
 count = 0
