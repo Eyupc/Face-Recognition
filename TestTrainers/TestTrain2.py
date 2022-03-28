@@ -8,7 +8,7 @@ from PIL import Image
 from ObjectsManager import ObjectsManager
 from Recognition.FaceTrainer import FaceTrainer
 
-obj = ObjectsManager()
+#obj = ObjectsManager()
 
 imagePaths = [os.path.join('./images/',f) for f in os.listdir('./images/')]
 faceSamples=[]

@@ -7,10 +7,10 @@ import tornado.web
 import tornado.websocket as ws
 from tornado.options import define, options
 
-from ObjectsManager import ObjectsManager
 from WS.WebSocketManager import WebSocketManager
 from WS.incoming.IManager import IncomingManager
 from utils.TextConverter import TextConverter
+
 define('port', default=7777, help='Websocket Server Port')
 class WebSocketHandler(ws.WebSocketHandler):
 
