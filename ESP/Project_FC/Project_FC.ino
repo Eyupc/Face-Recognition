@@ -2,8 +2,6 @@
 #include <WebSocketsServer.h>
 #include <ArduinoJson.h>
 
-// Constants
-
 const int PIN_DOOR = 2;
 const char* ssid = "WIFIIICT";
 const char* password = "fakatijger";
