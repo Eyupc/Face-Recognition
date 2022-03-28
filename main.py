@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import json
 import time
 
 import cv2
@@ -29,7 +30,7 @@ class Main:
         except Exception:
             print("[INFO] Trainer.yml is empty!")
 
-        self.cam = cv2.VideoCapture(1,cv2.CAP_DSHOW)
+        self.cam = cv2.VideoCapture(0,cv2.CAP_DSHOW)
         self.cam.set(3, 640)
         self.cam.set(4, 480)
         self.minW = 0.2 * self.cam.get(3)
@@ -89,9 +90,8 @@ class Main:
                                 print("[ERROR] " + str(e))
 
                             # print(id)
-                            print(confidence)
+                            print(str(id) + " " + str(100 - confidence))
                             if confidence <= 50:
-                                print(str(id) + "  " + str((100 - confidence)))
                                 if not self.isRecognized:
                                     self.isRecognized = True
                                     self.First_Recognize_time = time.time()
@@ -121,8 +121,14 @@ class Main:
                             self.isRecognized = False
                             self.First_Recognize_time = 0
 
-                        elif time.time() - self.First_Recognize_time >= 5:
-                            self.WebSocketClient.sendMessage()
+                        elif time.time() - self.First_Recognize_time >= 3:
+                            data = {
+                                "header": "OpenDoorEvent",
+                                "data": [{
+                                    "open": True
+                                }]
+                            }
+                            self.WebSocketClient.sendMessage(json.dumps(data))
                             self.isRecognized = False
                             self.First_Recognize_time = 0
 

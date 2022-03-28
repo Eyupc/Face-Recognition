@@ -11,7 +11,7 @@ class WebSocketClient(threading.Thread):
 
     def run(self):
         websocket.enableTrace(True)
-        self.websocket = websocket.WebSocketApp("ws://192.168.0.191:8888",
+        self.websocket = websocket.WebSocketApp("ws://10.3.41.25:8888",
                                                 on_message=lambda ws, msg: self.on_message(ws, msg),
                                                 on_error=lambda ws, msg: self.on_error(ws, msg),
                                                 on_close=lambda ws: self.on_close(ws),
@@ -33,14 +33,8 @@ class WebSocketClient(threading.Thread):
     def on_close(self,ws):
         pass
 
-    def sendMessage(self):
+    def sendMessage(self,msg):
         if(self.ws == None):
             pass
-        data = {
-            "header": "OpenDoorEvent",
-            "data": [{
-                "open": True
-            }]
-        }
-        self.ws.send(json.dumps(data))
+        self.ws.send(msg)
 

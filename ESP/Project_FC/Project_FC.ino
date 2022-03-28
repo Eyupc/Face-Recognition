@@ -5,8 +5,8 @@
 // Constants
 
 const int PIN_DOOR = 2;
-const char* ssid = "telenet-DF7D9FF";
-const char* password = "trTv2ahhGumb";
+const char* ssid = "WIFIIICT";
+const char* password = "fakatijger";
 
 WebSocketsServer webSocket = WebSocketsServer(8888);
 void onWebSocketEvent(uint8_t num,
