@@ -1,31 +1,41 @@
 import base64
 import io
+import threading
 
 import cv2
+import face_recognition
 import numpy as np
+import urllib.request as ur
 from PIL import Image
 
 
 class TrainerManager:
+    ids = []
+    encodings = []
     def __init__(self):
-        self.recognizer = cv2.face.LBPHFaceRecognizer_create()
+        pass
 
     def train(self):
         from ObjectsManager import ObjectsManager
 
-        ids = []
-        train_data = []
-
         for user in ObjectsManager.getUserManager().getUsers().values():
-
             for train in user.getTrainData():
-                img = Image.open(io.BytesIO(base64.b64decode(train)))
+                #img = Image.open(io.BytesIO(base64.b64decode(train)))
                 #img.show()
-                train_data.append(np.array(img,'uint8'))
-                ids.append(user.getId())
+                #decoded = ur.urlopen("data:image/png;base64," + train)
+                #image = face_recognition.load_image_file(decoded)
+                arr = face_recognition.face_encodings(face_recognition.load_image_file(io.BytesIO(base64.b64decode(train))))
+                if len(arr) >= 1:
+                    TrainerManager.encodings.append(arr[0])
+                    TrainerManager.ids.append(user.getId())
 
         try:
-            self.recognizer.train(train_data, np.asarray(ids))
-            self.recognizer.write("trainer.yml")
+            pass
         except Exception:
             print("No users found")
+
+    def addId(self):
+        pass
+
+    def addTrain(self):
+        pass
