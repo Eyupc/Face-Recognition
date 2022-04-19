@@ -6,6 +6,8 @@ import tornado.ioloop
 import tornado.web
 import tornado.websocket as ws
 from tornado.options import define, options
+import asyncio
+import nest_asyncio
 
 from WS.WebSocketManager import WebSocketManager
 from WS.incoming.IManager import IncomingManager
@@ -22,11 +24,10 @@ class WebSocketHandler(ws.WebSocketHandler):
     def open(self):
         print("[WS] New client connected!")
 
-    def on_message(self, message):
+    async def on_message(self, message):
         data = json.loads(TextConverter.decodeBytes(bytes(message)))
         Event = WebSocketHandler.__incomingManager.getEvent(data['header'])
         Event(self, data['header'], data['data'][0]).execute()
-
     def on_close(self):
         WebSocketManager.removeClient(self)
         print("[WS] WS-Client disconnected")

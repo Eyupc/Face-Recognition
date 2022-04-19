@@ -34,7 +34,7 @@ class WebSocketClient(threading.Thread):
         pass
 
     def sendMessage(self,msg):
-        if(self.ws == None):
-            pass
+        if self.ws is None:
+            return
         self.ws.send(msg)
 

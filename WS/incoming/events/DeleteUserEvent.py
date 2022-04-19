@@ -13,8 +13,6 @@ class DeleteUserEvent(IncomingMessage):
     def execute(self):
         from ObjectsManager import ObjectsManager
         result = ObjectsManager.getUserManager().removeUser(self.data["user_id"])
-        TrainerManager().train()
-        ObjectsManager.getMain().updateReader()
         data = {
             "header":"DeleteUserEvent",
             "data":[{
