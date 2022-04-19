@@ -6,8 +6,6 @@ import tornado.ioloop
 import tornado.web
 import tornado.websocket as ws
 from tornado.options import define, options
-import asyncio
-import nest_asyncio
 
 from WS.WebSocketManager import WebSocketManager
 from WS.incoming.IManager import IncomingManager

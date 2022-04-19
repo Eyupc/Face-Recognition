@@ -4,7 +4,6 @@ import threading
 import time
 
 import face_recognition
-import nest_asyncio
 from PIL import Image
 from django.utils.baseconv import base64
 
@@ -44,15 +43,14 @@ class UserManager:
         # self.collection.delete_one({'id':id})
         if self.__users[id]:
             del self.__users[id]
-            index = -1
-            for userId in ObjectsManager.getTrainerManager().ids:
-                index += 1 #TODO
-                if userId == id:
-                    print("ininin")
-                    del ObjectsManager.getTrainerManager().ids[index]
-                    del ObjectsManager.getTrainerManager().encodings[index]
-                    print(ObjectsManager.getTrainerManager().ids)
-            return True
+            try:
+                while True:
+                    index = ObjectsManager.getTrainerManager().ids.index(id)
+                    ObjectsManager.getTrainerManager().ids.remove(id)
+                    ObjectsManager.getTrainerManager().encodings.pop(index)
+                    #print(ObjectsManager.getTrainerManager().ids)
+            except ValueError as e:
+                return True
         else:
             return False
 

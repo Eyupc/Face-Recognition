@@ -63,12 +63,12 @@ class Main:
         raise SystemExit()
 
     def pause(self):
-        print("ok111")
+        print("[INFO] Updating users...")
         self.close = True
         self.cam.release()
 
     def resume(self):
-        print("oke22")
+        print("[INFO]: Updated users!")
         self.cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         self.cam.set(3, 640)
         self.cam.set(4, 480)
@@ -94,7 +94,7 @@ class Main:
                                 if len(self.obj.getUserManager().getUsers()) > 0:
                                     id, confidence = -1, 200
                                     matches = face_recognition.compare_faces(self.obj.getTrainerManager().encodings,
-                                                                             face_encoding)
+                                                                             face_encoding,tolerance=0.3)
                                     # name = "Unknown"
 
                                     if True in matches:
@@ -163,7 +163,7 @@ class Main:
                     k = cv2.waitKey(10) & 0xff
 
                     if (self.close == True) | (str(ret) == "False"):
-                        print("IN GEGAAN")
+                        #print("IN GEGAAN")
                         self.loop = False
                         cv2.destroyAllWindows()
                         break
@@ -184,6 +184,10 @@ class Main:
                     self.stop()
                 except Exception as e:
                     print("[ERROR]: " + str(e))
+                    if self.close == True:
+                        self.loop = False
+                        cv2.destroyAllWindows()
+                        break
 
 
 if __name__ == "__main__":

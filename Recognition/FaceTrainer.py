@@ -29,8 +29,9 @@ class FaceTrainer:
             image_.append(np.array(imgJPG,'uint8'))
 
         for img in image_:
+
             try:
-                image = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             except Exception:
                 image = img
             face_locations = detector.detectMultiScale(image,
@@ -42,7 +43,7 @@ class FaceTrainer:
                 count +=1
                 x, y, w, h = faces
                 face = image[y:y+h,x:x+w]
-                self.encodedData = base64.b64encode(cv2.imencode('.jpg',cv2.resize(face,(200,200)))[1]).decode("utf-8")
+                self.encodedData = base64.b64encode(cv2.imencode('.jpg',face)[1]).decode("utf-8")
                 self.trainingdata.append(self.encodedData)
         if count > 0:
             self.__addUser()
