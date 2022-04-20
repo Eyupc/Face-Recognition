@@ -12,9 +12,12 @@ import numpy as np
 
 from WS.WebSocketManager import WebSocketManager
 from WSClient.WebSocketClient import WebSocketClient
+from utils.DateManager import DateManager
 
 
 class Main:
+    WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
     def __init__(self):
         from WS.WebSocketServer import WebSocketServer
         from ObjectsManager import ObjectsManager
@@ -35,7 +38,8 @@ class Main:
         self.minW = 0.2 * self.cam.get(3)
         self.minH = 0.2 * self.cam.get(4)
         self.font = cv2.FONT_HERSHEY_SIMPLEX
-        self.startTime()
+
+        self.updateStats()
 
         self.loop = True
         self.loop_time = time.time()
@@ -48,9 +52,16 @@ class Main:
 
         self.close = False
 
-    def startTime(self):
+    def updateStats(self):
         collection = self.obj.getDatabaseManager().getDatabaseService().getDatabase()['stats']
         collection.update_one({}, {'$set': {'start_time': time.time()}})
+
+        update_date = collection.find_one({'update_date'})
+
+    def increaseRecognizedAmount(self):
+        collection = self.obj.getDatabaseManager().getDatabaseService().getDatabase()['stats']
+        print(DateManager.getTodayDayName())
+        collection.update_one({},{'$inc': {('recognized_amount.'+DateManager.getTodayDayName()): 1}})
 
     def stop(self):
         collection = self.obj.getDatabaseManager().getDatabaseService().getDatabase()['stats']
@@ -75,6 +86,7 @@ class Main:
         self.loop = True
         self.close = False
         self.process_this_frame = True
+
 
     def run(self):
         while True:
@@ -151,7 +163,10 @@ class Main:
                                             "open": True
                                         }]
                                     }
+
                                     # self.WebSocketClient.sendMessage(json.dumps(data))
+                                    self.increaseRecognizedAmount()
+
                                     self.isRecognized = False
                                     self.First_Recognize_time = 0
                         except Exception as e:
