@@ -94,7 +94,7 @@ class Main:
                                 if len(self.obj.getUserManager().getUsers()) > 0:
                                     id, confidence = -1, 200
                                     matches = face_recognition.compare_faces(self.obj.getTrainerManager().encodings,
-                                                                             face_encoding,tolerance=0.3)
+                                                                             face_encoding, tolerance=0.4)
                                     # name = "Unknown"
 
                                     if True in matches:
@@ -163,7 +163,7 @@ class Main:
                     k = cv2.waitKey(10) & 0xff
 
                     if (self.close == True) | (str(ret) == "False"):
-                        #print("IN GEGAAN")
+                        # print("IN GEGAAN")
                         self.loop = False
                         cv2.destroyAllWindows()
                         break
