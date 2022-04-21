@@ -13,11 +13,10 @@ import numpy as np
 from WS.WebSocketManager import WebSocketManager
 from WSClient.WebSocketClient import WebSocketClient
 from utils.DateManager import DateManager
+from utils.NumpyEncoder import NumpyEncoder
 
 
 class Main:
-    WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-
     def __init__(self):
         from WS.WebSocketServer import WebSocketServer
         from ObjectsManager import ObjectsManager
@@ -43,6 +42,7 @@ class Main:
 
         self.loop = True
         self.loop_time = time.time()
+        self.last_update_date = ""
 
         self.isRecognized = False
         self.First_Recognize_time = 0
@@ -56,7 +56,8 @@ class Main:
         collection = self.obj.getDatabaseManager().getDatabaseService().getDatabase()['stats']
         collection.update_one({}, {'$set': {'start_time': time.time()}})
 
-        update_date = collection.find_one({'update_date'})
+        update_date = collection.find_one({},{'update_date'})
+        self.last_update_date = update_date["update_date"]
 
     def increaseRecognizedAmount(self):
         collection = self.obj.getDatabaseManager().getDatabaseService().getDatabase()['stats']
@@ -71,6 +72,16 @@ class Main:
         self.WebSocketServer.stop()
         self.loop = False
         self.cam.release()
+
+
+       # f = open("trainer.yml","w")
+       # f.write(json.dumps({'encodings': self.obj.getTrainerManager().encodings, 'ids': self.obj.getTrainerManager().ids},
+       #            cls=NumpyEncoder))
+#
+       # f.close()
+
+
+
         raise SystemExit()
 
     def pause(self):
