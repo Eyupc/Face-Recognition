@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import datetime
 import json
 import threading
 import time
@@ -9,7 +10,7 @@ import cv2.data
 import dlib
 import face_recognition
 import numpy as np
-
+from datetime import date
 from WS.WebSocketManager import WebSocketManager
 from WSClient.WebSocketClient import WebSocketClient
 from utils.DateManager import DateManager
@@ -38,11 +39,11 @@ class Main:
         self.minH = 0.2 * self.cam.get(4)
         self.font = cv2.FONT_HERSHEY_SIMPLEX
 
+        self.last_update_week = 0
         self.updateStats()
 
         self.loop = True
         self.loop_time = time.time()
-        self.last_update_date = ""
 
         self.isRecognized = False
         self.First_Recognize_time = 0
@@ -56,12 +57,20 @@ class Main:
         collection = self.obj.getDatabaseManager().getDatabaseService().getDatabase()['stats']
         collection.update_one({}, {'$set': {'start_time': time.time()}})
 
+        date_format = "%d-%m-%Y"
         update_date = collection.find_one({},{'update_date'})
-        self.last_update_date = update_date["update_date"]
+        self.last_update_week = datetime.datetime.strptime(update_date["update_date"],date_format).isocalendar()[1]
+        difference = datetime.datetime.strptime(date.today().strftime("%d-%m-%Y"),date_format).isocalendar()[1] - self.last_update_week
+        if difference > 0:
+            for day in DateManager.WEEKDAYS:
+                collection.update_one({}, {'$set': {('recognized_amount.' + day): 0}})
+        collection.update_one({}, {'$set': {'update_date': date.today().strftime("%d-%m-%Y")}})
+
+
 
     def increaseRecognizedAmount(self):
         collection = self.obj.getDatabaseManager().getDatabaseService().getDatabase()['stats']
-        print(DateManager.getTodayDayName())
+        #print(DateManager.getTodayDayName())
         collection.update_one({},{'$inc': {('recognized_amount.'+DateManager.getTodayDayName()): 1}})
 
     def stop(self):
@@ -72,16 +81,11 @@ class Main:
         self.WebSocketServer.stop()
         self.loop = False
         self.cam.release()
-
-
        # f = open("trainer.yml","w")
        # f.write(json.dumps({'encodings': self.obj.getTrainerManager().encodings, 'ids': self.obj.getTrainerManager().ids},
        #            cls=NumpyEncoder))
 #
        # f.close()
-
-
-
         raise SystemExit()
 
     def pause(self):
@@ -133,8 +137,8 @@ class Main:
                                     # print(id)
                                     # print(str(id) + " " + str(100 - confidence))
 
-                                    print(id)
                                     if id > -1:
+                                        print(id)
                                         if not self.isRecognized:
                                             self.isRecognized = True
                                             self.First_Recognize_time = time.time()

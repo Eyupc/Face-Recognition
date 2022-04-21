@@ -30,6 +30,7 @@ class TrainerManager:
                     TrainerManager.encodings.append(arr[0])
                     TrainerManager.ids.append(user.getId())
 
+        print("[INFO] Encoding of images is done!")
         try:
             pass
         except Exception:

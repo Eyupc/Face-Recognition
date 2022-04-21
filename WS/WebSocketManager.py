@@ -1,3 +1,6 @@
+import tornado
+from tornado import iostream
+
 class WebSocketManager:
     __clients = {}
 
@@ -45,5 +48,10 @@ class WebSocketManager:
 
     @staticmethod
     def sendMessage(websocket, message: str):
-        if websocket.ws_connection.stream.socket:
-            websocket.write_message(message, binary=True)
+        try:
+            if websocket.ws_connection.stream.socket:
+                websocket.write_message(message, binary=True)
+        except tornado.iostream.StreamClosedError as e:
+            pass
+
+
