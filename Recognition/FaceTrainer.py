@@ -29,7 +29,6 @@ class FaceTrainer:
             image_.append(np.array(imgJPG,'uint8'))
 
         for img in image_:
-
             try:
                 image = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             except Exception:
