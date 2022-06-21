@@ -1,6 +1,5 @@
 import base64
 import io
-import threading
 
 import cv2
 import numpy as np
@@ -11,7 +10,7 @@ detector = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalfac
 
 
 class FaceTrainer:
-    def __init__(self,name,lastname,age,images):
+    def __init__(self, name, lastname, age, images):
         self.name = name
         self.lastname = lastname
         self.age = age
@@ -20,13 +19,13 @@ class FaceTrainer:
         self.ids = []
         self.encodedData = None
 
-    def trainFace(self): #images in base64 format
+    def trainFace(self):  # images in base64 format
         count = 0
         image_ = []
         for img_from_client in self.images:
             imgdata = base64.b64decode(img_from_client)
-            imgJPG  = Image.open(io.BytesIO(imgdata))
-            image_.append(np.array(imgJPG,'uint8'))
+            imgJPG = Image.open(io.BytesIO(imgdata))
+            image_.append(np.array(imgJPG, 'uint8'))
 
         for img in image_:
             try:
@@ -39,10 +38,10 @@ class FaceTrainer:
                                                        minSize=(30, 30)
                                                        )
             for faces in face_locations:
-                count +=1
+                count += 1
                 x, y, w, h = faces
-                face = image[y:y+h,x:x+w]
-                self.encodedData = base64.b64encode(cv2.imencode('.jpg',face)[1]).decode("utf-8")
+                face = image[y:y + h, x:x + w]
+                self.encodedData = base64.b64encode(cv2.imencode('.jpg', face)[1]).decode("utf-8")
                 self.trainingdata.append(self.encodedData)
         if count > 0:
             self.__addUser()
@@ -50,4 +49,4 @@ class FaceTrainer:
 
     def __addUser(self):
         from ObjectsManager import ObjectsManager
-        ObjectsManager.getUserManager().addUser(self.name,self.lastname,self.age,self.trainingdata)
+        ObjectsManager.getUserManager().addUser(self.name, self.lastname, self.age, self.trainingdata)

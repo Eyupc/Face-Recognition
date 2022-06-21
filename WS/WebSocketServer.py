@@ -12,9 +12,11 @@ from WS.incoming.IManager import IncomingManager
 from utils.TextConverter import TextConverter
 
 define('port', default=7777, help='Websocket Server Port')
-class WebSocketHandler(ws.WebSocketHandler):
 
+
+class WebSocketHandler(ws.WebSocketHandler):
     __incomingManager = IncomingManager()
+
     @classmethod
     def route_urls(cls):
         return [(r'/', cls, {}), ]
@@ -26,6 +28,7 @@ class WebSocketHandler(ws.WebSocketHandler):
         data = json.loads(TextConverter.decodeBytes(bytes(message)))
         Event = WebSocketHandler.__incomingManager.getEvent(data['header'])
         Event(self, data['header'], data['data'][0]).execute()
+
     def on_close(self):
         WebSocketManager.removeClient(self)
         print("[WS] WS-Client disconnected")
@@ -49,4 +52,3 @@ class WebSocketServer(threading.Thread):
 
     def stop(self):
         self.ioloop.add_callback(self.ioloop.stop)
-

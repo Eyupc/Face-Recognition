@@ -2,7 +2,7 @@ import pymongo
 
 
 class DatabaseService:
-    def __init__(self,host,port,database):
+    def __init__(self, host, port, database):
         self.__host = host
         self.__port = port
         self.__database = database
@@ -10,7 +10,7 @@ class DatabaseService:
 
     def __tryToConnect(self):
         try:
-            clientz = pymongo.MongoClient("mongodb://"+self.__host+":"+str(self.__port)+"/")
+            clientz = pymongo.MongoClient("mongodb://" + self.__host + ":" + str(self.__port) + "/")
             return clientz
         except Exception:
             print("Server not available")

@@ -10,6 +10,7 @@ class ObjectsManager:
     __trainerManager = TrainerManager
 
     __Main = Main
+
     def __init__(self):
         self.loadAll()
 
@@ -34,6 +35,7 @@ class ObjectsManager:
     @staticmethod
     def getMain():
         return ObjectsManager.__Main
+
     @staticmethod
     def getInstance():
         return

@@ -1,17 +1,12 @@
+import base64
+import io
 import json
 import json as JSON
-import threading
 import time
 
 import face_recognition
-from PIL import Image
-from django.utils.baseconv import base64
-
 import ObjectsManager
 from Recognition.users.User import User
-import io
-import base64
-import asyncio
 
 
 class UserManager:
@@ -48,7 +43,7 @@ class UserManager:
                     index = ObjectsManager.getTrainerManager().ids.index(id)
                     ObjectsManager.getTrainerManager().ids.remove(id)
                     ObjectsManager.getTrainerManager().encodings.pop(index)
-                    #print(ObjectsManager.getTrainerManager().ids)
+                    # print(ObjectsManager.getTrainerManager().ids)
             except ValueError as e:
                 return True
         else:
@@ -74,7 +69,7 @@ class UserManager:
 
         ObjectsManager.getMain().pause()
         time.sleep(1)
-        self.__train(train_data,userId)
+        self.__train(train_data, userId)
 
     def __train(self, train_data, userId):
         from ObjectsManager import ObjectsManager

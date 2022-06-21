@@ -11,12 +11,13 @@ class IncomingManager:
         self.events = {}
         self.registerEvents()
 
-    def registerEvents(self):
+    def registerEvents(self):  # Registreer alle events
         self.events["ConnectionEvent"] = ConnectionEvent
         self.events["ConnectionClosedEvent"] = ConnectionClosedEvent
         self.events["PingEvent"] = PingEvent
         self.events["AddUserEvent"] = AddUserEvent
         self.events["DeleteUserEvent"] = DeleteUserEvent
         self.events["SetPageEvent"] = SetPageEvent
-    def getEvent(self,event):
+
+    def getEvent(self, event):
         return self.events[event]

@@ -1,25 +1,21 @@
-import asyncio
 import base64
 import datetime
-import json
-import threading
 import time
+import json
+from datetime import date
 
 import cv2
 import cv2.data
-import dlib
 import face_recognition
-import numpy as np
-from datetime import date
+
 from WS.WebSocketManager import WebSocketManager
-from WSClient.WebSocketClient import WebSocketClient
 from utils.DateManager import DateManager
-from utils.NumpyEncoder import NumpyEncoder
 
 
 class Main:
     def __init__(self):
         from WS.WebSocketServer import WebSocketServer
+        from WSClient.WebSocketClient import WebSocketClient
         from ObjectsManager import ObjectsManager
         self.recognizer = cv2.face.LBPHFaceRecognizer_create(threshold=0.0)
 
@@ -29,10 +25,10 @@ class Main:
         self.WebSocketServer = WebSocketServer()  # Face Recognition Websocket Server
         self.WebSocketServer.start()
 
-        # self.WebSocketClient = WebSocketClient()  # ESP Websocket Client
-        # self.WebSocketClient.start()
+        self.WebSocketClient = WebSocketClient()  # ESP Websocket Client
+        self.WebSocketClient.start()
 
-        self.cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        self.cam = cv2.VideoCapture(1, cv2.CAP_DSHOW)
         self.cam.set(3, 640)
         self.cam.set(4, 480)
         self.minW = 0.2 * self.cam.get(3)
@@ -58,20 +54,19 @@ class Main:
         collection.update_one({}, {'$set': {'start_time': time.time()}})
 
         date_format = "%d-%m-%Y"
-        update_date = collection.find_one({},{'update_date'})
-        self.last_update_week = datetime.datetime.strptime(update_date["update_date"],date_format).isocalendar()[1]
-        difference = datetime.datetime.strptime(date.today().strftime("%d-%m-%Y"),date_format).isocalendar()[1] - self.last_update_week
+        update_date = collection.find_one({}, {'update_date'})
+        self.last_update_week = datetime.datetime.strptime(update_date["update_date"], date_format).isocalendar()[1]
+        difference = datetime.datetime.strptime(date.today().strftime("%d-%m-%Y"), date_format).isocalendar()[
+                         1] - self.last_update_week
         if difference > 0:
             for day in DateManager.WEEKDAYS:
                 collection.update_one({}, {'$set': {('recognized_amount.' + day): 0}})
         collection.update_one({}, {'$set': {'update_date': date.today().strftime("%d-%m-%Y")}})
 
-
-
     def increaseRecognizedAmount(self):
         collection = self.obj.getDatabaseManager().getDatabaseService().getDatabase()['stats']
-        #print(DateManager.getTodayDayName())
-        collection.update_one({},{'$inc': {('recognized_amount.'+DateManager.getTodayDayName()): 1}})
+        # print(DateManager.getTodayDayName())
+        collection.update_one({}, {'$inc': {('recognized_amount.' + DateManager.getTodayDayName()): 1}})
 
     def stop(self):
         collection = self.obj.getDatabaseManager().getDatabaseService().getDatabase()['stats']
@@ -81,11 +76,11 @@ class Main:
         self.WebSocketServer.stop()
         self.loop = False
         self.cam.release()
-       # f = open("trainer.yml","w")
-       # f.write(json.dumps({'encodings': self.obj.getTrainerManager().encodings, 'ids': self.obj.getTrainerManager().ids},
-       #            cls=NumpyEncoder))
-#
-       # f.close()
+        # f = open("trainer.yml","w")
+        # f.write(json.dumps({'encodings': self.obj.getTrainerManager().encodings, 'ids': self.obj.getTrainerManager().ids},
+        #            cls=NumpyEncoder))
+        #
+        # f.close()
         raise SystemExit()
 
     def pause(self):
@@ -101,7 +96,6 @@ class Main:
         self.loop = True
         self.close = False
         self.process_this_frame = True
-
 
     def run(self):
         while True:
@@ -179,7 +173,7 @@ class Main:
                                         }]
                                     }
 
-                                    # self.WebSocketClient.sendMessage(json.dumps(data))
+                                    self.WebSocketClient.sendMessage(json.dumps(data))
                                     self.increaseRecognizedAmount()
 
                                     self.isRecognized = False

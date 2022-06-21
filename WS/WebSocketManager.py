@@ -1,6 +1,7 @@
 import tornado
 from tornado import iostream
 
+
 class WebSocketManager:
     __clients = {}
 
@@ -8,14 +9,14 @@ class WebSocketManager:
         pass
 
     @staticmethod
-    def addClient(websocket, id,page):
+    def addClient(websocket, id, page):
         WebSocketManager.__clients[websocket] = {
-            "id":id,
-            "page":page
+            "id": id,
+            "page": page
         }
 
     @staticmethod
-    def setPage(websocket,page):
+    def setPage(websocket, page):
         WebSocketManager.__clients[websocket]["page"] = page
 
     @staticmethod
@@ -36,8 +37,9 @@ class WebSocketManager:
         return WebSocketManager.__clients.keys()
 
     @staticmethod
-    def sendBroadcast(message,page):
+    def sendBroadcast(message, page):
         clients = WebSocketManager.__clients.keys()
+        #print(str(clients))
         try:
             for client in clients:
                 if client.ws_connection.stream.socket:
@@ -51,7 +53,5 @@ class WebSocketManager:
         try:
             if websocket.ws_connection.stream.socket:
                 websocket.write_message(message, binary=True)
-        except tornado.iostream.StreamClosedError as e:
+        except Exception as e:
             pass
-
-

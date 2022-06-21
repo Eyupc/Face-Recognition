@@ -13,11 +13,11 @@ class PingEvent(IncomingMessage):
 
     def execute(self):
         data = {
-            "header":"PingEvent",
+            "header": "PingEvent",
             "data": [{
                 "id": WebSocketManager.getId(self.websocket),
-                "message":"Ping!"
+                "message": "Ping!"
             }]
         }
 
-        WebSocketManager.sendMessage(websocket=self.websocket,message=str(json.dumps(data)))
+        WebSocketManager.sendMessage(websocket=self.websocket, message=str(json.dumps(data)))

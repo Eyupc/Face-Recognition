@@ -1,22 +1,19 @@
 import json
-import threading
 
 from Recognition.FaceTrainer import FaceTrainer
 from WS.WebSocketManager import WebSocketManager
 from WS.incoming.IncomingMessage import IncomingMessage
-import asyncio
+
 
 class AddUserEvent(IncomingMessage):
     def __init__(self, websocket, header, data):
-        IncomingMessage.__init__(self,websocket, header, data)
+        IncomingMessage.__init__(self, websocket, header, data)
 
         self.header = header
         self.data = data
         self.websocket = websocket
 
-
-
-    def execute(self):
+    def execute(self):  # Voorbeeld hoe classe wordt opgeroepen, en de execute functie wordt opgeroepen.
         ft = FaceTrainer(self.data["name"], self.data["lastname"], self.data["age"], self.data["images"])
         faces = ft.trainFace()
         data = {
